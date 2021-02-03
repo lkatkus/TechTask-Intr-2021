@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Box } from 'src/core';
-import { PageContainer, VideoPlayer } from 'src/containers';
 import { Form, Field, Input } from 'src/components';
+import { PageContainer, VideoPlayer } from 'src/containers';
+import { VideoFetcher } from 'src/data';
 
 const VIDEO_NUMBER_OPTIONS = Array(10)
   .fill(undefined)
@@ -23,48 +24,46 @@ interface FormValues {
   playDuration: string;
 }
 
-const MainPage: React.FC = () => {
-  const [videoQuery, setVideoQuery] = useState<FormValues>();
-
-  return (
-    <PageContainer title="Video App">
-      <Box display="flex">
-        <Box width="50%">
-          <Form<FormValues>
-            initialValues={{ searchTitle: '', videosNumber: '', playDuration: '' }}
-            handleSubmit={(values) => {
-              setVideoQuery(values);
-            }}
-          >
-            {() => (
-              <React.Fragment>
-                <Field label="Video input" name="searchTitle" component={Input.Text} />
-                <Field
-                  label="Number of videos to play"
-                  name="videosNumber"
-                  component={Input.Dropdown}
-                  options={VIDEO_NUMBER_OPTIONS}
-                />
-                <Field
-                  label="Each video plays for up to"
-                  name="playDuration"
-                  component={Input.Dropdown}
-                  options={PLAY_DURATION_OPTIONS}
-                />
-                {/* @TODO update to autosubmit */}
-                <button type="submit">Search</button>
-              </React.Fragment>
-            )}
-          </Form>
+const MainPage: React.FC = () => (
+  <VideoFetcher>
+    {({ data, isLoading }, { getVideos }) => (
+      <PageContainer title="Video App">
+        <Box display="flex">
+          <Box width="50%">
+            <Form<FormValues>
+              initialValues={{ searchTitle: '', videosNumber: '', playDuration: '' }}
+              handleSubmit={(values) => {
+                getVideos(values);
+              }}
+            >
+              {() => (
+                <React.Fragment>
+                  <Field label="Video input" name="searchTitle" component={Input.Text} />
+                  <Field
+                    label="Number of videos to play"
+                    name="videosNumber"
+                    component={Input.Dropdown}
+                    options={VIDEO_NUMBER_OPTIONS}
+                  />
+                  <Field
+                    label="Each video plays for up to"
+                    name="playDuration"
+                    component={Input.Dropdown}
+                    options={PLAY_DURATION_OPTIONS}
+                  />
+                  {/* @TODO update to autosubmit */}
+                  <button type="submit">Search</button>
+                </React.Fragment>
+              )}
+            </Form>
+          </Box>
+          <Box width="50%">
+            <VideoPlayer isLoading={isLoading} videos={data.videos} />
+          </Box>
         </Box>
-        <Box width="50%">
-          <VideoPlayer />
-        </Box>
-      </Box>
-
-      <div>{JSON.stringify(videoQuery)}</div>
-    </PageContainer>
-  );
-};
+      </PageContainer>
+    )}
+  </VideoFetcher>
+);
 
 export default MainPage;
