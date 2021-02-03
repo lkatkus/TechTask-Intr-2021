@@ -1,7 +1,12 @@
 import React from 'react';
+import { FieldInputProps } from 'formik';
 
-const TextInput: React.FC = () => {
-  return <input type="text" />;
+interface Props {
+  field: FieldInputProps<any>;
+}
+
+const TextInput: React.FC<Props> = ({ field }) => {
+  return <input type="text" {...field} />;
 };
 
 export default TextInput;
