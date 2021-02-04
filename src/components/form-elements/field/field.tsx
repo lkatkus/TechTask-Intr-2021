@@ -1,6 +1,8 @@
 import React from 'react';
 import { Field as FormikField } from 'formik';
 
+import { FieldLabel } from './components';
+
 interface Props {
   label: string;
   name: string;
@@ -11,7 +13,7 @@ interface Props {
 
 const Field: React.FC<Props> = ({ label, name, component, options }) => (
   <div>
-    <div>{label}</div>
+    <FieldLabel label={label} />
     <FormikField name={name} component={component} options={options} />
   </div>
 );

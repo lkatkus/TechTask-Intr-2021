@@ -2,14 +2,30 @@ import React, { useEffect, useState } from 'react';
 
 import { Video } from './components';
 
+export interface PlaybackConfig {
+  videosNumber: number;
+  playDuration: number;
+}
+
 interface Props {
+  playbackConfig: PlaybackConfig;
   isLoading: boolean;
   videos: any;
 }
 
-const VideoPlayer: React.FC<Props> = ({ isLoading, videos }) => {
+const VideoPlayer: React.FC<Props> = ({ isLoading, playbackConfig, videos }) => {
   const [videoQue, setVideoQue] = useState([]);
-  const [currentVideo, setCurrentVideo] = useState();
+  const [videoNr, setVideoNr] = useState<number>(0);
+  const [currentVideo, setCurrentVideo] = useState<any | null>();
+  const [config, setConfig] = useState<PlaybackConfig>(playbackConfig);
+
+  useEffect(() => {
+    if (playbackConfig) {
+      setVideoNr(0);
+      setCurrentVideo(null);
+      setConfig(playbackConfig);
+    }
+  }, [playbackConfig]);
 
   useEffect(() => {
     if (videos) {
@@ -19,23 +35,37 @@ const VideoPlayer: React.FC<Props> = ({ isLoading, videos }) => {
 
   useEffect(() => {
     if (videoQue.length > 0) {
-      setCurrentVideo(videoQue[0]);
+      setCurrentVideo(videoQue[videoNr]);
+
+      const videoDuration = (videoQue[videoNr] as any).duration;
+      const nextVideoAfter =
+        videoDuration < config.playDuration ? videoDuration : config.playDuration;
 
       const timer = setTimeout(() => {
-        setCurrentVideo(videoQue[1]);
-      }, 5000);
+        // @TODO fix issue when only 1 video is chosen
+        const nextVideo = videoNr + 1 < config.videosNumber ? videoNr + 1 : 0;
 
-      return () => clearTimeout(timer);
+        setVideoNr(nextVideo);
+        setCurrentVideo(videoQue[nextVideo]);
+      }, nextVideoAfter * 1000);
+
+      return () => {
+        clearTimeout(timer);
+      };
     }
-  }, [videoQue]);
+  }, [config, videoNr, videoQue]);
 
-  return currentVideo ? (
+  return (
     <div>
-      <Video data={currentVideo} />
-    </div>
-  ) : (
-    <div>
-      <div>{isLoading ? 'Fetching videos...' : 'Missing video data'}</div>
+      {currentVideo && !isLoading ? (
+        <div>
+          <Video data={currentVideo} />
+        </div>
+      ) : (
+        <div>
+          <div>{isLoading ? 'Fetching videos...' : 'Missing video data'}</div>
+        </div>
+      )}
     </div>
   );
 };

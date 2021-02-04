@@ -7,9 +7,11 @@ interface Props {
 }
 
 const VideoFetcher = ({ children }: Props): JSX.Element => {
-  const getVideos = useMutation((vars: any) =>
-    pexelsAPI.getVideos({ query: vars.searchTitle, numberOfVideos: 1 }),
-  );
+  const getVideos = useMutation((vars: any) => {
+    const searchQuery = vars.searchTitle.trim().split(/,\s*|\s/);
+
+    return pexelsAPI.getVideos({ query: searchQuery, numberOfVideos: 1 });
+  });
 
   return children(
     { data: getVideos.data || {}, isLoading: getVideos.isLoading },
