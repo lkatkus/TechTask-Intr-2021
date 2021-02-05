@@ -12,6 +12,7 @@
       "version": "detect"
     }
   },
+
   "plugins": ["@typescript-eslint", "react-hooks", "prettier"],
   "extends": [
     "plugin:react/recommended",

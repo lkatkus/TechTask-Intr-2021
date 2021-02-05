@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
-    "@testing-library/user-event": "^12.6.3",
     "@types/jest": "^26.0.20",
     "@types/node": "^12.19.15",
     "@types/react": "^16.14.3",
@@ -24,7 +22,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "lint": "eslint src"
   },
@@ -47,6 +45,8 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/user-event": "^12.6.3",
     "@types/styled-components": "^5.1.7",
     "@types/styled-system": "^5.1.10",
     "@typescript-eslint/eslint-plugin": "^4.14.2",
@@ -63,14 +63,13 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "npm test && lint-staged"
     }
   },
   "lint-staged": {
     "**/*.{ts,tsx}": [
       "pretty-quick --staged",
-      "npm run lint",
-      "git add"
+      "npm run lint"
     ]
   }
 }

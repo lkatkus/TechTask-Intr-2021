@@ -10,7 +10,7 @@ export interface PlaybackConfig {
 }
 
 interface Props {
-  isLoading: boolean;
+  isLoading?: boolean;
   videos: any[];
   config: PlaybackConfig;
 }
@@ -28,9 +28,9 @@ class VideoPlayer extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      videos: [],
       currentVideo: 0,
       config: props.config,
+      videos: props.videos,
     };
 
     this.videoRef = React.createRef();

@@ -13,6 +13,7 @@ const Video = React.forwardRef<HTMLVideoElement, Props>(({ data, handleCanPlay }
 
   return (
     <video
+      data-testid={videoFile.id}
       ref={ref}
       key={`${videoFile.id}-${Date.now()}`}
       muted
@@ -26,7 +27,11 @@ const Video = React.forwardRef<HTMLVideoElement, Props>(({ data, handleCanPlay }
         handleCanPlay();
       }}
     >
-      <source src={videoFile.link} type={videoFile.file_type} />
+      <source
+        data-testid={`${videoFile.id}-source`}
+        src={videoFile.link}
+        type={videoFile.file_type}
+      />
       Sorry, your browser doesn&apos;t support embedded videos.
     </video>
   );
