@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
+import { VideoFetcher } from 'src/data';
 import { Form, Field, Grid, Input } from 'src/components';
 import { PageContainer, VideoPlayer, PlaybackConfig } from 'src/containers';
-import { VideoFetcher } from 'src/data';
 
 const VIDEO_NUMBER_OPTIONS = Array(10)
   .fill(undefined)
@@ -91,7 +91,7 @@ const MainPage: React.FC = () => {
               <Grid.Col size={8} px={10}>
                 <VideoPlayer
                   isLoading={isLoading}
-                  videos={data.videos}
+                  videos={data?.videos}
                   playbackConfig={playbackConfig}
                 />
               </Grid.Col>

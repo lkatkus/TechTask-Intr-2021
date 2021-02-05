@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import { Video as VideoType } from 'src/api/pexels';
+
 import { Video } from './components';
 
 export interface PlaybackConfig {
@@ -10,22 +12,26 @@ export interface PlaybackConfig {
 interface Props {
   playbackConfig: PlaybackConfig;
   isLoading: boolean;
-  videos: any;
+  videos?: VideoType[];
 }
 
 const VideoPlayer: React.FC<Props> = ({ isLoading, playbackConfig, videos }) => {
-  const [videoQue, setVideoQue] = useState([]);
-  const [videoNr, setVideoNr] = useState<number>(0);
-  const [currentVideo, setCurrentVideo] = useState<any | null>();
-  const [config, setConfig] = useState<PlaybackConfig>(playbackConfig);
+  const [nextVideo, setNextVideo] = useState<number>(0);
+  const [videoQue, setVideoQue] = useState<VideoType[]>([]);
+  const [currentVideo, setCurrentVideo] = useState<VideoType>();
 
   useEffect(() => {
-    if (playbackConfig) {
-      setVideoNr(0);
-      setCurrentVideo(null);
-      setConfig(playbackConfig);
+    if (videoQue.length > 0) {
+      const totalVideos =
+        videoQue.length < playbackConfig.videosNumber
+          ? videoQue.length
+          : playbackConfig.videosNumber;
+
+      const next = videoQue[nextVideo % totalVideos];
+
+      setCurrentVideo(next);
     }
-  }, [playbackConfig]);
+  }, [videoQue, nextVideo, playbackConfig]);
 
   useEffect(() => {
     if (videos) {
@@ -33,33 +39,23 @@ const VideoPlayer: React.FC<Props> = ({ isLoading, playbackConfig, videos }) => 
     }
   }, [videos]);
 
-  useEffect(() => {
-    if (videoQue.length > 0) {
-      setCurrentVideo(videoQue[videoNr]);
-
-      const videoDuration = (videoQue[videoNr] as any).duration;
-      const nextVideoAfter =
-        videoDuration < config.playDuration ? videoDuration : config.playDuration;
-
-      const timer = setTimeout(() => {
-        // @TODO fix issue when only 1 video is chosen
-        const nextVideo = videoNr + 1 < config.videosNumber ? videoNr + 1 : 0;
-
-        setVideoNr(nextVideo);
-        setCurrentVideo(videoQue[nextVideo]);
-      }, nextVideoAfter * 1000);
-
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-  }, [config, videoNr, videoQue]);
-
   return (
     <div>
       {currentVideo && !isLoading ? (
         <div>
-          <Video data={currentVideo} />
+          <Video
+            data={currentVideo}
+            handleCanPlay={() => {
+              const playDuration =
+                currentVideo.duration < playbackConfig.playDuration
+                  ? currentVideo.duration
+                  : playbackConfig.playDuration;
+
+              setTimeout(() => {
+                setNextVideo(nextVideo + 1);
+              }, playDuration * 1000);
+            }}
+          />
         </div>
       ) : (
         <div>

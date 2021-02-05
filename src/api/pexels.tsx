@@ -1,10 +1,10 @@
-export interface User {
+interface User {
   id: number;
   name: string;
   url: string;
 }
 
-export interface VideoFile {
+interface VideoFile {
   id: number;
   quality: string;
   file_type: string;
@@ -13,7 +13,7 @@ export interface VideoFile {
   link: string;
 }
 
-export interface VideoPicture {
+interface VideoPicture {
   id: number;
   picture: string;
   nr: number;
@@ -31,7 +31,7 @@ export interface Video {
   video_pictures: VideoPicture[];
 }
 
-export interface RootObject {
+export interface PexelsResponse {
   page: number;
   per_page: number;
   total_results: number;
@@ -48,7 +48,7 @@ interface SearchParams {
   orientation?: 'landscape' | 'portrait' | 'square';
 }
 
-const getVideos = async (params: SearchParams): Promise<any> => {
+const getVideos = async (params: SearchParams): Promise<PexelsResponse> => {
   const requestURL = SEARCH_URL + `?query=${params.query}`;
 
   const response = await fetch(requestURL, {

@@ -1,9 +1,14 @@
 import { useMutation } from 'react-query';
 
-import pexelsAPI from 'src/api/pexels';
+import pexelsAPI, { PexelsResponse } from 'src/api/pexels';
+
+interface DataProps {
+  isLoading: boolean;
+  data?: PexelsResponse;
+}
 
 interface Props {
-  children: (data: any, actions: any) => JSX.Element;
+  children: (data: DataProps, actions: any) => JSX.Element;
 }
 
 const VideoFetcher = ({ children }: Props): JSX.Element => {
@@ -14,7 +19,7 @@ const VideoFetcher = ({ children }: Props): JSX.Element => {
   });
 
   return children(
-    { data: getVideos.data || {}, isLoading: getVideos.isLoading },
+    { data: getVideos.data, isLoading: getVideos.isLoading },
     { getVideos: getVideos.mutate },
   );
 };
