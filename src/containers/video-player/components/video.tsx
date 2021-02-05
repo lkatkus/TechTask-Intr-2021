@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useReducer, useState } from 'react';
+import React from 'react';
 
 import { Video as VideoType } from 'src/api/pexels';
 
@@ -7,43 +7,31 @@ interface Props {
   handleCanPlay: () => void;
 }
 
-const Video: React.FC<Props> = ({ data, handleCanPlay }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoData, setVideoData] = useState<VideoType>();
+const Video = React.forwardRef<HTMLVideoElement, Props>(({ data, handleCanPlay }, ref) => {
+  const videoFile = data?.video_files[0];
+  const videoPicture = data?.video_pictures[0];
 
-  useEffect(() => {
-    if (data && !videoData) {
-      setVideoData(data);
-    } else if (videoData && data.id !== videoData.id) {
-      setVideoData(data);
-    }
-  }, [data, videoData]);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      const track = videoRef.current.addTextTrack('captions', 'English', 'en');
-
-      track.mode = 'showing';
-      track.addCue(new VTTCue(0, data.duration, data.user.name));
-    }
-  }, [videoRef, data]);
-
-  return videoData ? (
+  return (
     <video
-      ref={videoRef}
-      key={videoData.id}
+      ref={ref}
+      key={`${videoFile.id}-${Date.now()}`}
       muted
       autoPlay
+      // @TODO update video sizes
       width="320"
       height="240"
       style={{ objectFit: 'cover' }}
-      poster={videoData.video_pictures[0].picture}
-      onCanPlay={handleCanPlay}
+      poster={videoPicture.picture}
+      onCanPlayThrough={() => {
+        handleCanPlay();
+      }}
     >
-      <source src={videoData.video_files[0].link} type={videoData.video_files[0].file_type} />
+      <source src={videoFile.link} type={videoFile.file_type} />
       Sorry, your browser doesn&apos;t support embedded videos.
     </video>
-  ) : null;
-};
+  );
+});
+
+Video.displayName = 'Video';
 
 export default Video;

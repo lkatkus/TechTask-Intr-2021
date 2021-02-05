@@ -12,6 +12,8 @@ const VIDEO_NUMBER_OPTIONS = Array(10)
   }));
 
 const PLAY_DURATION_OPTIONS = [
+  // @TODO remove 2, 5 when finished
+  { value: 2, label: '2s' },
   { value: 5, label: '5s' },
   { value: 10, label: '10s' },
   { value: 20, label: '20s' },
@@ -91,8 +93,8 @@ const MainPage: React.FC = () => {
               <Grid.Col size={8} px={10}>
                 <VideoPlayer
                   isLoading={isLoading}
-                  videos={data?.videos}
-                  playbackConfig={playbackConfig}
+                  videos={data?.videos || []}
+                  config={playbackConfig}
                 />
               </Grid.Col>
             </Grid.Row>

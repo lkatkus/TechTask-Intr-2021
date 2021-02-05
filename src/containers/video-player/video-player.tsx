@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { Video as VideoType } from 'src/api/pexels';
 
@@ -10,60 +10,98 @@ export interface PlaybackConfig {
 }
 
 interface Props {
-  playbackConfig: PlaybackConfig;
   isLoading: boolean;
-  videos?: VideoType[];
+  videos: any[];
+  config: PlaybackConfig;
 }
 
-const VideoPlayer: React.FC<Props> = ({ isLoading, playbackConfig, videos }) => {
-  const [nextVideo, setNextVideo] = useState<number>(0);
-  const [videoQue, setVideoQue] = useState<VideoType[]>([]);
-  const [currentVideo, setCurrentVideo] = useState<VideoType>();
+interface State {
+  videos: VideoType[];
+  currentVideo: number;
+  config: PlaybackConfig;
+}
 
-  useEffect(() => {
-    if (videoQue.length > 0) {
-      const totalVideos =
-        videoQue.length < playbackConfig.videosNumber
-          ? videoQue.length
-          : playbackConfig.videosNumber;
+class VideoPlayer extends React.Component<Props, State> {
+  private videoRef: React.RefObject<HTMLVideoElement>;
 
-      const next = videoQue[nextVideo % totalVideos];
+  constructor(props: Props) {
+    super(props);
 
-      setCurrentVideo(next);
+    this.state = {
+      videos: [],
+      currentVideo: 0,
+      config: props.config,
+    };
+
+    this.videoRef = React.createRef();
+
+    this.setCurrentVideoCaption = this.setCurrentVideoCaption.bind(this);
+    this.prepareNextVideo = this.prepareNextVideo.bind(this);
+  }
+
+  componentDidUpdate(prevProps: Props): void {
+    // @TODO add proper props comparison
+    if (this.props.videos !== prevProps.videos) {
+      this.setState({
+        currentVideo: 0, // To start from first video
+        videos: this.props.videos,
+        config: this.props.config,
+      });
     }
-  }, [videoQue, nextVideo, playbackConfig]);
+  }
 
-  useEffect(() => {
-    if (videos) {
-      setVideoQue(videos);
+  setCurrentVideoCaption(): void {
+    if (this.videoRef.current) {
+      const { videos, currentVideo } = this.state;
+      const track = this.videoRef.current.addTextTrack('captions', 'English', 'en');
+
+      track.mode = 'showing';
+      track.addCue(new VTTCue(0, videos[currentVideo].duration, videos[currentVideo].user.name));
     }
-  }, [videos]);
+  }
 
-  return (
-    <div>
-      {currentVideo && !isLoading ? (
-        <div>
-          <Video
-            data={currentVideo}
-            handleCanPlay={() => {
-              const playDuration =
-                currentVideo.duration < playbackConfig.playDuration
-                  ? currentVideo.duration
-                  : playbackConfig.playDuration;
+  prepareNextVideo(): void {
+    const { config, videos, currentVideo } = this.state;
 
-              setTimeout(() => {
-                setNextVideo(nextVideo + 1);
-              }, playDuration * 1000);
-            }}
-          />
-        </div>
-      ) : (
-        <div>
-          <div>{isLoading ? 'Fetching videos...' : 'Missing video data'}</div>
-        </div>
-      )}
-    </div>
-  );
-};
+    const nextVideo = this.state.currentVideo + 1;
+    const totalVideos = videos.length < config.videosNumber ? videos.length : config.videosNumber;
+    const playDuration =
+      videos[currentVideo].duration < config.playDuration
+        ? videos[currentVideo].duration
+        : config.playDuration;
+
+    setTimeout(() => {
+      // To stop current video buffering
+      if (this.videoRef.current) {
+        this.videoRef.current.src = '';
+        this.videoRef.current.pause();
+      }
+
+      this.setState({
+        currentVideo: nextVideo % totalVideos,
+      });
+    }, playDuration * 1000);
+  }
+
+  render(): JSX.Element {
+    const { videos, currentVideo } = this.state;
+    const { isLoading } = this.props;
+
+    return videos?.length > 0 ? (
+      <div>
+        <Video
+          ref={this.videoRef}
+          data={videos[currentVideo]}
+          handleCanPlay={() => {
+            this.setCurrentVideoCaption();
+            this.prepareNextVideo();
+          }}
+        />
+      </div>
+    ) : (
+      <div>{isLoading ? 'Fetching videos...' : 'Missing video data'}</div>
+    );
+  }
+}
 
 export default VideoPlayer;
