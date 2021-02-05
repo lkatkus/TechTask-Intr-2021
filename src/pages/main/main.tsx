@@ -50,7 +50,10 @@ const MainPage: React.FC = () => {
                       playDuration: Number(values.playDuration),
                     });
 
-                    getVideos(values);
+                    getVideos({
+                      searchTitle: values.searchTitle,
+                      videosNumber: Number(values.videosNumber),
+                    });
                   }}
                 >
                   {() => (

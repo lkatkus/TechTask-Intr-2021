@@ -39,7 +39,7 @@ export interface PexelsResponse {
   videos: Video[];
 }
 
-const SEARCH_URL = 'https://api.pexels.com/videos/search';
+const SEARCH_URL = 'https://api.pexels.com/videos/search?';
 const API_KEY = process.env.REACT_APP_PEXELS_API_KEY || '';
 
 interface SearchParams {
@@ -49,7 +49,13 @@ interface SearchParams {
 }
 
 const getVideos = async (params: SearchParams): Promise<PexelsResponse> => {
-  const requestURL = SEARCH_URL + `?query=${params.query}`;
+  const requestURL =
+    SEARCH_URL +
+    new URLSearchParams({
+      query: params.query,
+      per_page: String(params.numberOfVideos),
+      orientation: 'landscape',
+    });
 
   const response = await fetch(requestURL, {
     headers: {
