@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { VideoFetcher } from 'src/data';
+import { actions as VideosActions } from 'src/redux/videos';
 import { Form, Field, Grid, Input } from 'src/components';
-import { PageContainer, VideoPlayer, PlaybackConfig } from 'src/containers';
+import { PageContainer, VideoPlayer } from 'src/containers';
+import { useDebounce } from 'src/hooks';
 
 const VIDEO_NUMBER_OPTIONS = Array(10)
   .fill(undefined)
@@ -32,79 +34,62 @@ const DEFAULT_CONFIG = {
 };
 
 const MainPage: React.FC = () => {
-  const [playbackConfig, setPlaybackConfig] = useState<PlaybackConfig>(DEFAULT_CONFIG);
+  const dispatch = useDispatch();
+  const { isLoading, data: videos } = useSelector((state: any) => state.videos);
 
   return (
-    <VideoFetcher>
-      {({ data, isLoading }, { getVideos }) => (
-        <PageContainer title="Video App">
-          <Grid.Container>
-            <Grid.Row>
-              <Grid.Col size={4} px={10}>
-                <Form<FormValues>
-                  initialValues={{ searchTitle: '', ...DEFAULT_CONFIG }}
-                  handleSubmit={(values) => {
-                    // @TODO handle situation, when only number and duration changes
-                    setPlaybackConfig({
-                      videosNumber: Number(values.videosNumber),
-                      playDuration: Number(values.playDuration),
-                    });
+    <PageContainer title="Video App">
+      <Grid.Container>
+        <Grid.Row>
+          <Grid.Col size={4} px={10}>
+            <Form<FormValues>
+              initialValues={{ searchTitle: '', ...DEFAULT_CONFIG }}
+              handleSubmit={(values) => {
+                dispatch(VideosActions.getVideos(values));
+              }}
+            >
+              {() => (
+                <Grid.Container>
+                  <Grid.Row mb={10}>
+                    <Grid.Col>
+                      <Field label="Video input" name="searchTitle" component={Input.Text} />
+                    </Grid.Col>
+                  </Grid.Row>
+                  <Grid.Row mb={10}>
+                    <Grid.Col>
+                      <Field
+                        label="Number of videos to play"
+                        name="videosNumber"
+                        component={Input.Dropdown}
+                        options={VIDEO_NUMBER_OPTIONS}
+                      />
+                    </Grid.Col>
+                  </Grid.Row>
+                  <Grid.Row mb={10}>
+                    <Grid.Col>
+                      <Field
+                        label="Each video plays for up to"
+                        name="playDuration"
+                        component={Input.Dropdown}
+                        options={PLAY_DURATION_OPTIONS}
+                      />
+                    </Grid.Col>
+                  </Grid.Row>
+                  <Grid.Row>
+                    {/* @TODO update to autosubmit */}
+                    <button type="submit">Search</button>
+                  </Grid.Row>
+                </Grid.Container>
+              )}
+            </Form>
+          </Grid.Col>
 
-                    getVideos({
-                      searchTitle: values.searchTitle,
-                      videosNumber: Number(values.videosNumber),
-                    });
-                  }}
-                >
-                  {() => (
-                    <Grid.Container>
-                      <Grid.Row mb={10}>
-                        <Grid.Col>
-                          <Field label="Video input" name="searchTitle" component={Input.Text} />
-                        </Grid.Col>
-                      </Grid.Row>
-
-                      <Grid.Row mb={10}>
-                        <Grid.Col>
-                          <Field
-                            label="Number of videos to play"
-                            name="videosNumber"
-                            component={Input.Dropdown}
-                            options={VIDEO_NUMBER_OPTIONS}
-                          />
-                        </Grid.Col>
-                      </Grid.Row>
-
-                      <Grid.Row mb={10}>
-                        <Grid.Col>
-                          <Field
-                            label="Each video plays for up to"
-                            name="playDuration"
-                            component={Input.Dropdown}
-                            options={PLAY_DURATION_OPTIONS}
-                          />
-                        </Grid.Col>
-                      </Grid.Row>
-                      <Grid.Row>
-                        {/* @TODO update to autosubmit */}
-                        <button type="submit">Search</button>
-                      </Grid.Row>
-                    </Grid.Container>
-                  )}
-                </Form>
-              </Grid.Col>
-              <Grid.Col size={8} px={10}>
-                <VideoPlayer
-                  isLoading={isLoading}
-                  videos={data?.videos || []}
-                  config={playbackConfig}
-                />
-              </Grid.Col>
-            </Grid.Row>
-          </Grid.Container>
-        </PageContainer>
-      )}
-    </VideoFetcher>
+          <Grid.Col size={8} px={10}>
+            <VideoPlayer isLoading={isLoading} videos={videos.videos} config={DEFAULT_CONFIG} />
+          </Grid.Col>
+        </Grid.Row>
+      </Grid.Container>
+    </PageContainer>
   );
 };
 
