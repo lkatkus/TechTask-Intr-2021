@@ -1,8 +1,7 @@
 import React from 'react';
-import { useFormikContext } from 'formik';
-import { useSelector } from 'react-redux';
 
-import { Form, Field, Grid, Input } from 'src/components';
+import { PlaybackConfig } from 'src/containers';
+import { Grid, Input } from 'src/components';
 import { useDebounce } from 'src/hooks';
 
 const VIDEO_NUMBER_OPTIONS = Array(10)
@@ -13,19 +12,10 @@ const VIDEO_NUMBER_OPTIONS = Array(10)
   }));
 
 const PLAY_DURATION_OPTIONS = [
-  // @TODO remove 2, 5 when finished
-  { value: 2, label: '2s' },
-  { value: 5, label: '5s' },
   { value: 10, label: '10s' },
   { value: 20, label: '20s' },
   { value: 30, label: '30s' },
 ];
-
-const INITIAL_VALUES = {
-  searchTitle: '',
-  videosNumber: 10,
-  playDuration: 5,
-};
 
 interface FormValues {
   searchTitle: string;
@@ -35,66 +25,85 @@ interface FormValues {
 
 interface Props {
   searchResults?: FormValues;
-  handleSubmitForm: (values: FormValues) => void;
+  playbackConfig: PlaybackConfig;
+  handleNewSearch: (values: FormValues) => void;
 }
 
-const AutoSearchHandler = () => {
-  const { values, submitForm } = useFormikContext<FormValues>();
-  const { withDebounce } = useDebounce(1000);
+const SearchForm: React.FC<Props> = ({ searchResults, playbackConfig, handleNewSearch }) => {
+  const { withDebounce } = useDebounce(500);
+  const [currentSearch, setCurrentSearch] = React.useState('');
+  const [searchParams, setSearchParams] = React.useState<FormValues>({
+    searchTitle: '',
+    videosNumber: playbackConfig.videosNumber,
+    playDuration: playbackConfig.playDuration,
+  });
 
+  // To handle video fetching with debounce
   React.useEffect(() => {
-    if (values.searchTitle) {
+    if (searchParams.searchTitle !== currentSearch) {
+      setCurrentSearch(searchParams.searchTitle);
+
       withDebounce(() => {
-        submitForm();
+        handleNewSearch(searchParams);
       });
     }
-  }, [values]);
+  }, [searchParams, handleNewSearch, currentSearch, withDebounce]);
 
-  return null;
-};
+  // To handle number of videos played, when results are available
+  React.useEffect(() => {
+    if (searchResults && searchParams.videosNumber !== searchResults.videosNumber) {
+      setSearchParams({ ...searchParams, videosNumber: searchResults.videosNumber });
+    }
+  }, [searchResults, searchParams]);
 
-const SearchForm: React.FC<Props> = ({ handleSubmitForm }) => {
   return (
-    <Form<FormValues>
-      initialValues={INITIAL_VALUES}
-      handleSubmit={(values) => {
-        handleSubmitForm(values);
-      }}
-    >
-      {() => (
-        <React.Fragment>
-          <Grid.Container>
-            <Grid.Row mb={10}>
-              <Grid.Col>
-                <Field label="Video input" name="searchTitle" component={Input.Text} />
-              </Grid.Col>
-            </Grid.Row>
-            <Grid.Row mb={10}>
-              <Grid.Col>
-                <Field
-                  label="Number of videos to play"
-                  name="videosNumber"
-                  component={Input.Dropdown}
-                  options={VIDEO_NUMBER_OPTIONS}
-                />
-              </Grid.Col>
-            </Grid.Row>
-            <Grid.Row mb={10}>
-              <Grid.Col>
-                <Field
-                  label="Each video plays for up to"
-                  name="playDuration"
-                  component={Input.Dropdown}
-                  options={PLAY_DURATION_OPTIONS}
-                />
-              </Grid.Col>
-            </Grid.Row>
-          </Grid.Container>
+    <Grid.Container>
+      <Grid.Row></Grid.Row>
+      <Grid.Row mb={20}>
+        <Grid.Col>
+          <Input.Text
+            name="searchTitle"
+            label="Video title"
+            placeholder="Enter video title"
+            value={searchParams?.searchTitle}
+            onChange={(e) => {
+              setSearchParams({ ...searchParams, searchTitle: e.target.value });
+            }}
+          />
+        </Grid.Col>
+      </Grid.Row>
 
-          <AutoSearchHandler />
-        </React.Fragment>
-      )}
-    </Form>
+      <Grid.Row mb={20}>
+        <Grid.Col>
+          <Input.Dropdown
+            name="videosNumber"
+            label="Number of videos to play"
+            value={searchParams?.videosNumber}
+            options={VIDEO_NUMBER_OPTIONS}
+            onChange={(e) => {
+              setSearchParams({ ...searchParams, videosNumber: Number(e.target.value) });
+            }}
+          />
+        </Grid.Col>
+      </Grid.Row>
+
+      <Grid.Row mb={20}>
+        <Grid.Col>
+          <Input.Dropdown
+            name="playDuration"
+            label="Each video plays for up to"
+            value={searchParams?.playDuration}
+            options={PLAY_DURATION_OPTIONS}
+            onChange={(e) => {
+              setSearchParams({ ...searchParams, playDuration: Number(e.target.value) });
+            }}
+          />
+        </Grid.Col>
+      </Grid.Row>
+
+      <Grid.Row>{JSON.stringify(searchParams)}</Grid.Row>
+      <Grid.Row>{JSON.stringify(searchResults)}</Grid.Row>
+    </Grid.Container>
   );
 };
 

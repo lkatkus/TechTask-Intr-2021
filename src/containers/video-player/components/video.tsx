@@ -23,9 +23,7 @@ const Video = React.forwardRef<HTMLVideoElement, Props>(({ data, handleCanPlay }
       height="240"
       style={{ objectFit: 'cover' }}
       poster={videoPicture.picture}
-      onCanPlayThrough={() => {
-        handleCanPlay();
-      }}
+      onCanPlay={handleCanPlay}
     >
       <source
         data-testid={`${videoFile.id}-source`}

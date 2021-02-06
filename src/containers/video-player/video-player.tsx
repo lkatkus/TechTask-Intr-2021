@@ -70,24 +70,25 @@ class VideoPlayer extends React.Component<Props, State> {
         ? videos[currentVideo].duration
         : config.playDuration;
 
-    setTimeout(() => {
-      // To stop current video buffering
-      if (this.videoRef.current) {
-        this.videoRef.current.src = '';
-        this.videoRef.current.pause();
-      }
+    this.videoRef.current?.addEventListener('timeupdate', (e: any) => {
+      if (e.target.currentTime > playDuration) {
+        if (this.videoRef.current) {
+          this.videoRef.current.src = '';
+          this.videoRef.current.pause();
+        }
 
-      this.setState({
-        currentVideo: nextVideo % totalVideos,
-      });
-    }, playDuration * 1000);
+        this.setState({
+          currentVideo: nextVideo % totalVideos,
+        });
+      }
+    });
   }
 
   render(): JSX.Element {
     const { videos, currentVideo } = this.state;
     const { isLoading } = this.props;
 
-    return videos?.length > 0 ? (
+    return videos?.length > 0 && !isLoading ? (
       <div>
         <Video
           ref={this.videoRef}

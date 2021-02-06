@@ -27,6 +27,11 @@ const getVideos = (vars: GetVideoVars): ThunkAction<any, any, unknown, Action<st
     });
 
     const payload = {
+      searchParams: {
+        searchTitle: vars.searchTitle,
+        videosNumber:
+          newVideos.total_results < vars.videosNumber ? newVideos.total_results : vars.videosNumber,
+      },
       videos: newVideos,
     };
 

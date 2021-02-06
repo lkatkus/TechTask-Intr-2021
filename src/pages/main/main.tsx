@@ -9,12 +9,12 @@ import { SearchForm } from './search-form';
 
 const DEFAULT_CONFIG = {
   videosNumber: 10,
-  playDuration: 5,
+  playDuration: 20,
 };
 
 const MainPage: React.FC = () => {
   const dispatch = useDispatch();
-  const { isLoading, data: videos } = useSelector((state: any) => state.videos);
+  const { isLoading, data: videos, searchParams } = useSelector((state: any) => state.videos);
   const [playbackConfig, setPlaybackConfig] = useState<PlaybackConfig>(DEFAULT_CONFIG);
 
   return (
@@ -23,7 +23,9 @@ const MainPage: React.FC = () => {
         <Grid.Row>
           <Grid.Col size={4} px={10}>
             <SearchForm
-              handleSubmitForm={(values) => {
+              searchResults={searchParams}
+              playbackConfig={playbackConfig}
+              handleNewSearch={(values) => {
                 setPlaybackConfig({
                   videosNumber: values.videosNumber,
                   playDuration: values.playDuration,

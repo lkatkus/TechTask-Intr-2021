@@ -1,6 +1,6 @@
 import * as types from './videos.types';
 
-export const initialState = { isLoading: false, data: null };
+export const initialState = { isLoading: false, data: null, searchParams: null };
 
 export const reducer = (state = initialState, { type, payload }: any): any => {
   switch (type) {
@@ -15,6 +15,7 @@ export const reducer = (state = initialState, { type, payload }: any): any => {
         error: null,
         isLoading: false,
         data: payload.videos,
+        searchParams: payload.searchParams,
       };
     case types.AFTER_GET_VIDEOS_ERROR:
       return {
