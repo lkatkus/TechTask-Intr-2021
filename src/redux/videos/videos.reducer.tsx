@@ -1,6 +1,6 @@
 import * as types from './videos.types';
 
-export const initialState = { isLoading: false, data: [] };
+export const initialState = { isLoading: false, data: null };
 
 export const reducer = (state = initialState, { type, payload }: any): any => {
   switch (type) {
