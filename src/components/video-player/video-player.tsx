@@ -38,11 +38,15 @@ class VideoPlayer extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props): void {
-    // @TODO add proper props comparison
     if (this.props.videos !== prevProps.videos) {
       this.setState({
         currentVideo: 0, // To start from first video
         videos: this.props.videos,
+        config: this.props.config,
+      });
+    } else if (this.props.config !== this.state.config) {
+      this.setState({
+        currentVideo: 0, // To start from first video
         config: this.props.config,
       });
     }

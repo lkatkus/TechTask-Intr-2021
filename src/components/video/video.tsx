@@ -28,7 +28,7 @@ const Video: React.FC<Props> = ({ data, maxPlayTime, handlePlayNext }) => {
         track.addCue(new VTTCue(0, data.duration, data.user.name));
       }
     }
-  }, [data]);
+  }, [data, maxPlayTime]);
 
   // Cleanup to stop buffering unmounted videos
   React.useEffect(() => {

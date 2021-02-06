@@ -26,9 +26,15 @@ interface Props {
   availableVideos: number;
   playbackConfig: VideoPlayerConfig;
   handleNewSearch: (values: FormValues) => void;
+  handleNewConfig: (values: FormValues) => void;
 }
 
-const SearchForm: React.FC<Props> = ({ availableVideos, playbackConfig, handleNewSearch }) => {
+const SearchForm: React.FC<Props> = ({
+  availableVideos,
+  playbackConfig,
+  handleNewSearch,
+  handleNewConfig,
+}) => {
   const { withDebounce } = useDebounce(500);
   const [currentSearch, setCurrentSearch] = React.useState('');
   const [searchParams, setSearchParams] = React.useState<FormValues>({
@@ -37,14 +43,20 @@ const SearchForm: React.FC<Props> = ({ availableVideos, playbackConfig, handleNe
     playDuration: playbackConfig.playDuration,
   });
 
-  // To handle video fetching with debounce
   React.useEffect(() => {
     if (searchParams.searchTitle !== currentSearch) {
+      // To handle video fetching with debounce on title change
       setCurrentSearch(searchParams.searchTitle);
 
       withDebounce(() => {
         handleNewSearch(searchParams);
       });
+    } else if (
+      // To handle playback config changes
+      searchParams.playDuration !== playbackConfig.playDuration ||
+      searchParams.videosNumber !== playbackConfig.videosNumber
+    ) {
+      handleNewConfig(searchParams);
     }
   }, [searchParams, handleNewSearch, currentSearch]);
 

@@ -33,6 +33,12 @@ const MainPage: React.FC = () => {
 
                 dispatch(VideosActions.getVideos(values));
               }}
+              handleNewConfig={(values) => {
+                setPlaybackConfig({
+                  videosNumber: values.videosNumber,
+                  playDuration: values.playDuration,
+                });
+              }}
             />
           </Grid.Col>
 
