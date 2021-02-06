@@ -1,8 +1,9 @@
 import React from 'react';
 
 import { Video as VideoType } from 'src/api/pexels';
+import { Spinner } from 'src/components';
 
-import { Video } from './components';
+import { PlayerContainer, VideoContainer, Video } from './components';
 
 export interface PlaybackConfig {
   videosNumber: number;
@@ -11,12 +12,12 @@ export interface PlaybackConfig {
 
 interface Props {
   isLoading?: boolean;
-  videos: any[];
+  videos?: any[];
   config: PlaybackConfig;
 }
 
 interface State {
-  videos: VideoType[];
+  videos?: VideoType[];
   currentVideo: number;
   config: PlaybackConfig;
 }
@@ -51,8 +52,9 @@ class VideoPlayer extends React.Component<Props, State> {
   }
 
   setCurrentVideoCaption(): void {
-    if (this.videoRef.current) {
-      const { videos, currentVideo } = this.state;
+    const { videos, currentVideo } = this.state;
+
+    if (videos && this.videoRef.current) {
       const track = this.videoRef.current.addTextTrack('captions', 'English', 'en');
 
       track.mode = 'showing';
@@ -63,44 +65,57 @@ class VideoPlayer extends React.Component<Props, State> {
   prepareNextVideo(): void {
     const { config, videos, currentVideo } = this.state;
 
-    const nextVideo = this.state.currentVideo + 1;
-    const totalVideos = videos.length < config.videosNumber ? videos.length : config.videosNumber;
-    const playDuration =
-      videos[currentVideo].duration < config.playDuration
-        ? videos[currentVideo].duration
-        : config.playDuration;
+    if (videos) {
+      const nextVideo = this.state.currentVideo + 1;
+      const totalVideos = videos.length < config.videosNumber ? videos.length : config.videosNumber;
 
-    this.videoRef.current?.addEventListener('timeupdate', (e: any) => {
-      if (e.target.currentTime > playDuration) {
-        if (this.videoRef.current) {
-          this.videoRef.current.src = '';
-          this.videoRef.current.pause();
-        }
-
-        this.setState({
-          currentVideo: nextVideo % totalVideos,
+      if (videos[currentVideo].duration < config.playDuration) {
+        this.videoRef.current?.addEventListener('ended', () => {
+          this.setState({
+            currentVideo: nextVideo % totalVideos,
+          });
+        });
+      } else {
+        this.videoRef.current?.addEventListener('timeupdate', (e: any) => {
+          if (e.target.currentTime >= config.playDuration) {
+            this.setState({
+              currentVideo: nextVideo % totalVideos,
+            });
+          }
         });
       }
-    });
+    }
+  }
+
+  renderVideo(): JSX.Element {
+    const { videos, currentVideo } = this.state;
+
+    if (!videos) {
+      return <div>Try searching for videos.</div>;
+    } else if (videos.length === 0) {
+      return <div>Sorry, but no videos where found.</div>;
+    }
+
+    return (
+      <Video
+        ref={this.videoRef}
+        data={videos[currentVideo]}
+        handleCanPlay={() => {
+          this.setCurrentVideoCaption();
+          this.prepareNextVideo();
+        }}
+      />
+    );
   }
 
   render(): JSX.Element {
-    const { videos, currentVideo } = this.state;
     const { isLoading } = this.props;
 
-    return videos?.length > 0 && !isLoading ? (
-      <div>
-        <Video
-          ref={this.videoRef}
-          data={videos[currentVideo]}
-          handleCanPlay={() => {
-            this.setCurrentVideoCaption();
-            this.prepareNextVideo();
-          }}
-        />
-      </div>
-    ) : (
-      <div>{isLoading ? 'Fetching videos...' : 'Missing video data'}</div>
+    return (
+      <PlayerContainer>
+        <Spinner isLoading={isLoading} />
+        <VideoContainer>{this.renderVideo()}</VideoContainer>
+      </PlayerContainer>
     );
   }
 }

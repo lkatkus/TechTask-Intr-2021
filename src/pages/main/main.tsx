@@ -21,7 +21,7 @@ const MainPage: React.FC = () => {
     <PageContainer title="Video App">
       <Grid.Container>
         <Grid.Row>
-          <Grid.Col size={4} px={10}>
+          <Grid.Col size={4} px={20}>
             <SearchForm
               searchResults={searchParams}
               playbackConfig={playbackConfig}
@@ -36,7 +36,7 @@ const MainPage: React.FC = () => {
             />
           </Grid.Col>
 
-          <Grid.Col size={8} px={10}>
+          <Grid.Col size={8} px={20}>
             <VideoPlayer isLoading={isLoading} videos={videos?.videos} config={playbackConfig} />
           </Grid.Col>
         </Grid.Row>

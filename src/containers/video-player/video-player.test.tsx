@@ -3,7 +3,6 @@ import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import VideoPlayer from './video-player';
-import { Video } from './components';
 
 const VIDEO_DATA_MOCK = [
   {
@@ -41,10 +40,10 @@ const VIDEO_DATA_MOCK = [
 describe('VideoPlayer', () => {
   it('shows loading indicator if isLoading provided', async () => {
     const { getByText } = render(
-      <VideoPlayer isLoading videos={[]} config={{ videosNumber: 1, playDuration: 10 }} />,
+      <VideoPlayer isLoading config={{ videosNumber: 1, playDuration: 10 }} />,
     );
 
-    const RenderedComponent = getByText('Fetching videos...');
+    const RenderedComponent = getByText('Try searching for videos.');
 
     expect(RenderedComponent).toBeDefined();
   });
@@ -54,7 +53,7 @@ describe('VideoPlayer', () => {
       <VideoPlayer videos={[]} config={{ videosNumber: 1, playDuration: 10 }} />,
     );
 
-    const RenderedComponent = getByText('Missing video data');
+    const RenderedComponent = getByText('Sorry, but no videos where found.');
 
     expect(RenderedComponent).toBeDefined();
   });

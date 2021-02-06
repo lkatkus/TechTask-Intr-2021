@@ -7,23 +7,33 @@ interface Props {
   handleCanPlay: () => void;
 }
 
-const Video = React.forwardRef<HTMLVideoElement, Props>(({ data, handleCanPlay }, ref) => {
+const Video = React.forwardRef<HTMLVideoElement, Props>(({ data, handleCanPlay }, ref: any) => {
   const videoFile = data?.video_files[0];
   const videoPicture = data?.video_pictures[0];
 
+  React.useEffect(() => {
+    const currentRef = ref.current;
+
+    // Cleanup to stop buffering unmounted videos
+    return () => {
+      currentRef.src = '';
+      currentRef.pause();
+    };
+  });
+
   return (
     <video
-      data-testid={videoFile.id}
       ref={ref}
+      data-testid={videoFile.id}
       key={`${videoFile.id}-${Date.now()}`}
       muted
       autoPlay
       // @TODO update video sizes
-      width="320"
-      height="240"
+      width="100%"
+      height="auto"
       style={{ objectFit: 'cover' }}
       poster={videoPicture.picture}
-      onCanPlay={handleCanPlay}
+      onCanPlayThrough={handleCanPlay}
     >
       <source
         data-testid={`${videoFile.id}-source`}
