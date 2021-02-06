@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Grid } from 'src/components';
-import { PageContainer, VideoPlayer, PlaybackConfig } from 'src/containers';
+import { Grid, VideoPlayer, Video, VideoPlayerConfig } from 'src/components';
+import { PageContainer } from 'src/containers';
 import { actions as VideosActions } from 'src/redux/videos';
 
 import { SearchForm } from './search-form';
@@ -15,7 +15,7 @@ const DEFAULT_CONFIG = {
 const MainPage: React.FC = () => {
   const dispatch = useDispatch();
   const { isLoading, data: videos } = useSelector((state: any) => state.videos);
-  const [playbackConfig, setPlaybackConfig] = useState<PlaybackConfig>(DEFAULT_CONFIG);
+  const [playbackConfig, setPlaybackConfig] = useState<VideoPlayerConfig>(DEFAULT_CONFIG);
 
   return (
     <PageContainer title="Video App">
@@ -37,7 +37,12 @@ const MainPage: React.FC = () => {
           </Grid.Col>
 
           <Grid.Col size={8} px={20}>
-            <VideoPlayer isLoading={isLoading} videos={videos} config={playbackConfig} />
+            <VideoPlayer
+              component={Video}
+              isLoading={isLoading}
+              videos={videos}
+              config={playbackConfig}
+            />
           </Grid.Col>
         </Grid.Row>
       </Grid.Container>

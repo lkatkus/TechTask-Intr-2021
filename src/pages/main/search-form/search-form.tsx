@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { PlaybackConfig } from 'src/containers';
-import { Grid, Input } from 'src/components';
+import { Grid, Input, VideoPlayerConfig } from 'src/components';
 import { useDebounce } from 'src/hooks';
 
 const VIDEO_NUMBER_OPTIONS = Array(10)
@@ -25,7 +24,7 @@ interface FormValues {
 
 interface Props {
   availableVideos: number;
-  playbackConfig: PlaybackConfig;
+  playbackConfig: VideoPlayerConfig;
   handleNewSearch: (values: FormValues) => void;
 }
 
@@ -47,7 +46,7 @@ const SearchForm: React.FC<Props> = ({ availableVideos, playbackConfig, handleNe
         handleNewSearch(searchParams);
       });
     }
-  }, [searchParams, handleNewSearch, currentSearch, withDebounce]);
+  }, [searchParams, handleNewSearch, currentSearch]);
 
   // To handle number of videos played, when results are available
   React.useEffect(() => {

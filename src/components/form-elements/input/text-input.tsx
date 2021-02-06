@@ -10,7 +10,7 @@ const StyledInput = styled.input`
 
 interface Props {
   name: string;
-  label: string;
+  label?: string;
   placeholder?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -20,6 +20,7 @@ const TextInput: React.FC<Props> = ({ name, label, placeholder, value, onChange 
   <div>
     {label && <InputLabel label={label} />}
     <StyledInput
+      data-testid={`${name}-data-testid`}
       type="text"
       name={name}
       placeholder={placeholder}

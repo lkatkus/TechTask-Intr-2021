@@ -3,9 +3,9 @@ import React from 'react';
 import { Video as VideoType } from 'src/api/pexels';
 import { Spinner } from 'src/components';
 
-import { PlayerContainer, VideoContainer, Video } from './components';
+import { PlayerContainer, VideoContainer } from './components';
 
-export interface PlaybackConfig {
+export interface VideoPlayerConfig {
   videosNumber: number;
   playDuration: number;
 }
@@ -13,18 +13,17 @@ export interface PlaybackConfig {
 interface Props {
   isLoading?: boolean;
   videos?: any[];
-  config: PlaybackConfig;
+  config: VideoPlayerConfig;
+  component: any;
 }
 
 interface State {
   videos?: VideoType[];
   currentVideo: number;
-  config: PlaybackConfig;
+  config: VideoPlayerConfig;
 }
 
 class VideoPlayer extends React.Component<Props, State> {
-  private videoRef: React.RefObject<HTMLVideoElement>;
-
   constructor(props: Props) {
     super(props);
 
@@ -34,10 +33,8 @@ class VideoPlayer extends React.Component<Props, State> {
       videos: props.videos,
     };
 
-    this.videoRef = React.createRef();
-
-    this.setCurrentVideoCaption = this.setCurrentVideoCaption.bind(this);
-    this.prepareNextVideo = this.prepareNextVideo.bind(this);
+    // @TODO add binding decorator
+    this.playNextVideo = this.playNextVideo.bind(this);
   }
 
   componentDidUpdate(prevProps: Props): void {
@@ -51,44 +48,22 @@ class VideoPlayer extends React.Component<Props, State> {
     }
   }
 
-  setCurrentVideoCaption(): void {
-    const { videos, currentVideo } = this.state;
-
-    if (videos && this.videoRef.current) {
-      const track = this.videoRef.current.addTextTrack('captions', 'English', 'en');
-
-      track.mode = 'showing';
-      track.addCue(new VTTCue(0, videos[currentVideo].duration, videos[currentVideo].user.name));
-    }
-  }
-
-  prepareNextVideo(): void {
-    const { config, videos, currentVideo } = this.state;
+  playNextVideo(): void {
+    const { config, videos } = this.state;
 
     if (videos) {
       const nextVideo = this.state.currentVideo + 1;
       const totalVideos = videos.length < config.videosNumber ? videos.length : config.videosNumber;
 
-      if (videos[currentVideo].duration < config.playDuration) {
-        this.videoRef.current?.addEventListener('ended', () => {
-          this.setState({
-            currentVideo: nextVideo % totalVideos,
-          });
-        });
-      } else {
-        this.videoRef.current?.addEventListener('timeupdate', (e: any) => {
-          if (e.target.currentTime >= config.playDuration) {
-            this.setState({
-              currentVideo: nextVideo % totalVideos,
-            });
-          }
-        });
-      }
+      this.setState({
+        currentVideo: nextVideo % totalVideos,
+      });
     }
   }
 
   renderVideo(): JSX.Element {
-    const { videos, currentVideo } = this.state;
+    const { videos, currentVideo, config } = this.state;
+    const { component: Video } = this.props;
 
     if (!videos) {
       return <div>Try searching for videos.</div>;
@@ -98,12 +73,9 @@ class VideoPlayer extends React.Component<Props, State> {
 
     return (
       <Video
-        ref={this.videoRef}
+        maxPlayTime={config.playDuration}
         data={videos[currentVideo]}
-        handleCanPlay={() => {
-          this.setCurrentVideoCaption();
-          this.prepareNextVideo();
-        }}
+        handlePlayNext={this.playNextVideo}
       />
     );
   }
