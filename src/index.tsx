@@ -7,7 +7,7 @@ import { composeWithDevTools } from 'redux-devtools-extension/logOnlyInProductio
 
 import App from './App';
 import GlobalStyle from './theme/global-style';
-import { rootReducer, initialRootState } from './redux';
+import rootReducer, { initialRootState } from './redux';
 
 const store = createStore(
   rootReducer,

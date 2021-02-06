@@ -1,38 +1,26 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-import pexelsAPI from 'src/api/pexels';
+import { pexelsAPI } from 'src/api/pexels';
 
 import * as types from './videos.types';
+import { State } from './videos.interfaces';
+import { GetVideoParams } from './videos.interfaces';
+import { getSearchQuery } from './videos.utils';
 
-interface GetVideoVars {
-  searchTitle: string;
-  videosNumber: number;
-}
+type ThunkResult<R> = ThunkAction<R, State, undefined, Action<types.Actions>>;
 
-const getVideos = (vars: GetVideoVars): ThunkAction<any, any, unknown, Action<string>> => async (
-  dispatch,
-) => {
+const getVideos = (vars: GetVideoParams): ThunkResult<void> => async (dispatch) => {
   try {
     dispatch({ type: types.BEFORE_GET_VIDEOS });
 
-    const searchQuery = vars.searchTitle
-      .trim()
-      .split(/,\s*|\s/)
-      .join(',');
-
     const newVideos = await pexelsAPI.getVideos({
-      query: searchQuery,
+      query: getSearchQuery(vars.searchTitle),
       numberOfVideos: vars.videosNumber,
     });
 
     const payload = {
-      searchParams: {
-        searchTitle: vars.searchTitle,
-        videosNumber:
-          newVideos.total_results < vars.videosNumber ? newVideos.total_results : vars.videosNumber,
-      },
-      videos: newVideos,
+      videos: newVideos.videos,
     };
 
     dispatch({ type: types.ON_GET_VIDEOS, payload });

@@ -6,8 +6,8 @@ export const initialRootState = {
   videos: initialVideos,
 };
 
-const appReducer = combineReducers({
+const rootReducer = combineReducers({
   videos: videosReducer,
 });
 
-export const rootReducer = (state: any, action: any): any => appReducer(state, action);
+export default rootReducer;

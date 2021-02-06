@@ -14,7 +14,7 @@ const DEFAULT_CONFIG = {
 
 const MainPage: React.FC = () => {
   const dispatch = useDispatch();
-  const { isLoading, data: videos, searchParams } = useSelector((state: any) => state.videos);
+  const { isLoading, data: videos } = useSelector((state: any) => state.videos);
   const [playbackConfig, setPlaybackConfig] = useState<PlaybackConfig>(DEFAULT_CONFIG);
 
   return (
@@ -23,7 +23,7 @@ const MainPage: React.FC = () => {
         <Grid.Row>
           <Grid.Col size={4} px={20}>
             <SearchForm
-              searchResults={searchParams}
+              availableVideos={videos?.length}
               playbackConfig={playbackConfig}
               handleNewSearch={(values) => {
                 setPlaybackConfig({
@@ -37,7 +37,7 @@ const MainPage: React.FC = () => {
           </Grid.Col>
 
           <Grid.Col size={8} px={20}>
-            <VideoPlayer isLoading={isLoading} videos={videos?.videos} config={playbackConfig} />
+            <VideoPlayer isLoading={isLoading} videos={videos} config={playbackConfig} />
           </Grid.Col>
         </Grid.Row>
       </Grid.Container>

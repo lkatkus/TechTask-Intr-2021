@@ -63,11 +63,11 @@ describe('VideoPlayer', () => {
       <VideoPlayer videos={VIDEO_DATA_MOCK} config={{ videosNumber: 1, playDuration: 5 }} />,
     );
 
-    const VideoComponent = getByTestId('video_files.0.id');
+    const VideoComponent = getByTestId('root.id');
     const SourceComponent = getByTestId('video_files.0.id-source');
 
     expect(VideoComponent).toBeDefined();
-    expect(VideoComponent).toHaveAttribute('poster', 'video_pictures.0.picture');
+    expect(VideoComponent).toHaveAttribute('poster', 'root.image');
     expect(SourceComponent).toBeDefined();
     expect(SourceComponent).toHaveAttribute('src', 'video_files.0.link');
     expect(SourceComponent).toHaveAttribute('type', 'video_files.0.file_type');
