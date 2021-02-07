@@ -1,4 +1,5 @@
 import React from 'react';
+import { equals } from 'ramda';
 
 import { Video } from 'src/api/pexels';
 import { Spinner } from 'src/components';
@@ -33,18 +34,17 @@ class VideoPlayer extends React.Component<Props, State> {
       videos: props.videos,
     };
 
-    // @TODO add binding decorator
     this.playNextVideo = this.playNextVideo.bind(this);
   }
 
   componentDidUpdate(prevProps: Props): void {
-    if (this.props.videos !== prevProps.videos) {
+    if (!equals(this.props.videos, prevProps.videos)) {
       this.setState({
         currentVideo: 0, // To start from first video
         videos: this.props.videos,
         config: this.props.config,
       });
-    } else if (this.props.config !== this.state.config) {
+    } else if (!equals(this.props.config, prevProps.config)) {
       this.setState({
         currentVideo: 0, // To start from first video
         config: this.props.config,
