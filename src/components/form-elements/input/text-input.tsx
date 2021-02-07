@@ -6,6 +6,7 @@ import { InputLabel } from './components';
 const StyledInput = styled.input`
   width: 100%;
   padding: 10px;
+  font-family: 'Open Sans';
 `;
 
 interface Props {

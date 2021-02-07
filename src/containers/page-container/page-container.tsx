@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Grid } from 'src/components';
+import { Text } from 'src/core';
 
-import { PageTitle } from './components';
+import { Grid } from 'src/components';
 
 interface Props {
   title: string;
@@ -13,7 +13,7 @@ const PageContainer: React.FC<Props> = ({ title, children }) => (
     <Grid.Container maxWidth={1200}>
       <Grid.Row mb={20}>
         <Grid.Col>
-          <PageTitle>{title}</PageTitle>
+          <Text.Heading1>{title}</Text.Heading1>
         </Grid.Col>
       </Grid.Row>
       <Grid.Row>

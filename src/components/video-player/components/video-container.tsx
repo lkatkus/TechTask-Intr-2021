@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 export default styled.div`
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-width: 640px;
+  min-height: 360px;
 `;

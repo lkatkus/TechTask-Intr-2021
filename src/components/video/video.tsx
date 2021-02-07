@@ -5,8 +5,8 @@ import { Video as VideoType } from 'src/api/pexels';
 
 const StyledVideo = styled.video`
   object-fit: cover;
-  width: 100%;
-  height: auto;
+  width: 640px;
+  height: 360px;
 `;
 
 interface Props {

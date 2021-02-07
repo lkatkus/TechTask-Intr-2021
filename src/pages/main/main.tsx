@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ErrorLabel, Grid, VideoPlayer, Video, VideoPlayerConfig } from 'src/components';
+import { Grid, VideoPlayer, Video, VideoPlayerConfig } from 'src/components';
 import { PageContainer } from 'src/containers';
 import { useSelector } from 'src/redux';
 import { actions as VideosActions } from 'src/redux/videos';
@@ -22,7 +22,7 @@ const MainPage: React.FC = () => {
     <PageContainer title="Video App">
       <Grid.Container>
         <Grid.Row>
-          <Grid.Col size={4} px={20}>
+          <Grid.Col size={4} p={20} background="lightGrey">
             <SearchForm
               availableVideos={videos?.length}
               playbackConfig={playbackConfig}
@@ -43,23 +43,18 @@ const MainPage: React.FC = () => {
             />
           </Grid.Col>
 
-          <Grid.Col size={8} px={20}>
-            <VideoPlayer
-              component={Video}
-              isLoading={isLoading}
-              videos={videos}
-              config={playbackConfig}
-            />
+          <Grid.Col size={8} px={20} py={60} border="10px solid lightGrey">
+            <Grid.Container>
+              <VideoPlayer
+                error={error}
+                component={Video}
+                isLoading={isLoading}
+                videos={videos}
+                config={playbackConfig}
+              />
+            </Grid.Container>
           </Grid.Col>
         </Grid.Row>
-
-        {error && (
-          <Grid.Row>
-            <Grid.Col>
-              <ErrorLabel>{error}</ErrorLabel>
-            </Grid.Col>
-          </Grid.Row>
-        )}
       </Grid.Container>
     </PageContainer>
   );

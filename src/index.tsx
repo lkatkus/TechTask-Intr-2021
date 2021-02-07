@@ -4,6 +4,7 @@ import { applyMiddleware, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension/logOnlyInProduction';
+import '@fontsource/open-sans';
 
 import App from './App';
 import GlobalStyle from './theme/global-style';

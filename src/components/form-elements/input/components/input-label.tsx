@@ -1,9 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
 
-import { Box } from 'src/core';
-
-const StyledLabel = styled.div``;
+import { Box, Text } from 'src/core';
 
 interface Props {
   label: string;
@@ -11,7 +8,7 @@ interface Props {
 
 const FieldLabel: React.FC<Props> = ({ label }) => (
   <Box mb={10}>
-    <StyledLabel>{label}</StyledLabel>
+    <Text.Body>{label}</Text.Body>
   </Box>
 );
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { equals } from 'ramda';
 
 import { Video } from 'src/api/pexels';
+import { Text } from 'src/core';
 import { Spinner } from 'src/components';
 
 import { PlayerContainer, VideoContainer } from './components';
@@ -13,6 +14,7 @@ export interface VideoPlayerConfig {
 
 interface Props {
   isLoading?: boolean;
+  error?: string;
   videos?: Video[];
   config: VideoPlayerConfig;
   component: any;
@@ -67,20 +69,24 @@ class VideoPlayer extends React.Component<Props, State> {
 
   renderVideo(): JSX.Element {
     const { videos, currentVideo, config } = this.state;
-    const { component: Video } = this.props;
+    const { error, component: Video } = this.props;
 
-    if (!videos) {
-      return <div>Try searching for videos.</div>;
+    if (error) {
+      return <Text.Body>{error}</Text.Body>;
+    } else if (!videos) {
+      return <Text.Body>Try searching for videos.</Text.Body>;
     } else if (videos.length === 0) {
-      return <div>Sorry, but no videos where found.</div>;
+      return <Text.Body>Sorry, but no videos where found.</Text.Body>;
     }
 
     return (
-      <Video
-        maxPlayTime={config.playDuration}
-        data={videos[currentVideo]}
-        handlePlayNext={this.playNextVideo}
-      />
+      <VideoContainer>
+        <Video
+          maxPlayTime={config.playDuration}
+          data={videos[currentVideo]}
+          handlePlayNext={this.playNextVideo}
+        />
+      </VideoContainer>
     );
   }
 
@@ -90,7 +96,7 @@ class VideoPlayer extends React.Component<Props, State> {
     return (
       <PlayerContainer>
         <Spinner isLoading={isLoading} />
-        <VideoContainer>{this.renderVideo()}</VideoContainer>
+        {this.renderVideo()}
       </PlayerContainer>
     );
   }

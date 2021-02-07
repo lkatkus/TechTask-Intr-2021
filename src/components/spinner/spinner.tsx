@@ -9,7 +9,7 @@ const SpinnerContainer = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(255, 255, 255, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,7 +24,7 @@ interface Props {
 const Spinner: React.FC<Props> = ({ isLoading }) => {
   return isLoading ? (
     <SpinnerContainer>
-      <FontAwesomeIcon size="5x" spin icon={faSpinner} />
+      <FontAwesomeIcon size="5x" spin icon={faSpinner} color="black" />
     </SpinnerContainer>
   ) : null;
 };
