@@ -25,6 +25,10 @@ const getVideos = async (params: SearchParams): Promise<PexelsResponse> => {
     },
   });
 
+  if (!response.ok) {
+    throw new Error('Something went wrong with your request.');
+  }
+
   return response.json();
 };
 

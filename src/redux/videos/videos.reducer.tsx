@@ -3,8 +3,8 @@ import { Payload, State } from './videos.interfaces';
 
 export const initialState: State = {
   isLoading: false,
-  data: null,
-  error: null,
+  data: undefined,
+  error: undefined,
 };
 
 export const reducer = (
@@ -22,7 +22,7 @@ export const reducer = (
         ...state,
         isLoading: false,
         data: payload.videos,
-        error: null,
+        error: undefined,
       };
     case types.AFTER_GET_VIDEOS_ERROR:
       return {

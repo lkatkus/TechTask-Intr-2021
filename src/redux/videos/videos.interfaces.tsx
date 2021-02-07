@@ -2,13 +2,13 @@ import { Video } from 'src/api/pexels';
 
 export interface State {
   isLoading?: boolean;
-  data?: Video[] | null;
-  error?: Error | null;
+  data?: Video[];
+  error?: string;
 }
 
 export interface Payload {
-  videos?: Video[] | null;
-  error?: Error | null;
+  videos?: Video[];
+  error?: string;
 }
 
 export interface GetVideoParams {

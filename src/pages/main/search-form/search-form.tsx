@@ -23,7 +23,7 @@ interface FormValues {
 }
 
 interface Props {
-  availableVideos: number;
+  availableVideos?: number;
   playbackConfig: VideoPlayerConfig;
   handleNewSearch: (values: FormValues) => void;
   handleNewConfig: (values: FormValues) => void;
@@ -69,14 +69,13 @@ const SearchForm: React.FC<Props> = ({
 
   return (
     <Grid.Container>
-      <Grid.Row></Grid.Row>
       <Grid.Row mb={20}>
         <Grid.Col>
           <Input.Text
             name="searchTitle"
             label="Video title"
             placeholder="Enter video title"
-            value={searchParams?.searchTitle}
+            value={searchParams.searchTitle}
             onChange={(e) => {
               setSearchParams({ ...searchParams, searchTitle: e.target.value });
             }}
@@ -89,7 +88,7 @@ const SearchForm: React.FC<Props> = ({
           <Input.Dropdown
             name="videosNumber"
             label="Number of videos to play"
-            value={searchParams?.videosNumber}
+            value={searchParams.videosNumber}
             options={VIDEO_NUMBER_OPTIONS}
             onChange={(e) => {
               setSearchParams({ ...searchParams, videosNumber: Number(e.target.value) });
@@ -103,7 +102,7 @@ const SearchForm: React.FC<Props> = ({
           <Input.Dropdown
             name="playDuration"
             label="Each video plays for up to"
-            value={searchParams?.playDuration}
+            value={searchParams.playDuration}
             options={PLAY_DURATION_OPTIONS}
             onChange={(e) => {
               setSearchParams({ ...searchParams, playDuration: Number(e.target.value) });

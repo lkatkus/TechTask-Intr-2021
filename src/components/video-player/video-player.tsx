@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Video as VideoType } from 'src/api/pexels';
+import { Video } from 'src/api/pexels';
 import { Spinner } from 'src/components';
 
 import { PlayerContainer, VideoContainer } from './components';
@@ -12,13 +12,13 @@ export interface VideoPlayerConfig {
 
 interface Props {
   isLoading?: boolean;
-  videos?: any[];
+  videos?: Video[];
   config: VideoPlayerConfig;
   component: any;
 }
 
 interface State {
-  videos?: VideoType[];
+  videos?: Video[];
   currentVideo: number;
   config: VideoPlayerConfig;
 }
