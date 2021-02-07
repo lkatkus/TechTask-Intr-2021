@@ -23,18 +23,12 @@ interface FormValues {
 }
 
 interface Props {
-  availableVideos?: number;
   playbackConfig: VideoPlayerConfig;
   handleNewSearch: (values: FormValues) => void;
   handleNewConfig: (values: FormValues) => void;
 }
 
-const SearchForm: React.FC<Props> = ({
-  availableVideos,
-  playbackConfig,
-  handleNewSearch,
-  handleNewConfig,
-}) => {
+const SearchForm: React.FC<Props> = ({ playbackConfig, handleNewSearch, handleNewConfig }) => {
   const { withDebounce } = useDebounce(500);
   const [currentSearch, setCurrentSearch] = React.useState('');
   const [searchParams, setSearchParams] = React.useState<FormValues>({
@@ -51,21 +45,25 @@ const SearchForm: React.FC<Props> = ({
       withDebounce(() => {
         handleNewSearch(searchParams);
       });
-    } else if (
-      // To handle playback config changes
-      searchParams.playDuration !== playbackConfig.playDuration ||
-      searchParams.videosNumber !== playbackConfig.videosNumber
-    ) {
-      handleNewConfig(searchParams);
     }
   }, [searchParams, handleNewSearch, currentSearch]);
 
   // To handle number of videos played, when results are available
   React.useEffect(() => {
-    if (availableVideos && searchParams.videosNumber !== availableVideos) {
-      setSearchParams({ ...searchParams, videosNumber: availableVideos });
+    if (searchParams.videosNumber !== playbackConfig.videosNumber) {
+      setSearchParams({ ...searchParams, videosNumber: playbackConfig.videosNumber });
     }
-  }, [availableVideos]);
+  }, [playbackConfig]);
+
+  // To handle playback config update
+  React.useEffect(() => {
+    if (
+      searchParams.videosNumber !== playbackConfig.videosNumber ||
+      searchParams.playDuration !== playbackConfig.playDuration
+    ) {
+      handleNewConfig(searchParams);
+    }
+  }, [searchParams]);
 
   return (
     <Grid.Container>

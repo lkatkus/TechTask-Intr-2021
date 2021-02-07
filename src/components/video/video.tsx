@@ -18,22 +18,18 @@ interface Props {
 const Video: React.FC<Props> = ({ data, maxPlayTime, handlePlayNext }) => {
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
-  // Prepare captions
-  React.useEffect(() => {
-    if (videoRef.current) {
-      const track = videoRef.current.addTextTrack('captions', 'English', 'en');
-
-      if (track) {
-        track.mode = 'showing';
-        track.addCue(new VTTCue(0, data.duration, data.user.name));
-      }
-    }
-  }, [data, maxPlayTime]);
-
-  // Cleanup to stop buffering unmounted videos
   React.useEffect(() => {
     const currentRef = videoRef.current;
 
+    // Prepare captions
+    if (currentRef) {
+      const track = currentRef.addTextTrack('captions', 'English', 'en');
+
+      track.mode = 'showing';
+      track.addCue(new VTTCue(0, data.duration, data.user.name));
+    }
+
+    // Cleanup to stop buffering unmounted videos
     return () => {
       if (currentRef) {
         currentRef.src = '';

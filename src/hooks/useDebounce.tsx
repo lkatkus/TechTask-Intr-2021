@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React from 'react';
 
 type Callback = () => void;
 
@@ -7,9 +7,9 @@ interface ReturnProps {
 }
 
 const useDebounce = (delay = 500): ReturnProps => {
-  const [callback, setCallback] = useState<Callback>();
+  const [callback, setCallback] = React.useState<Callback>();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (callback) {
       const handler = setTimeout(() => {
         callback();

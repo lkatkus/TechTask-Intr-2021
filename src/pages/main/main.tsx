@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { Grid, VideoPlayer, Video, VideoPlayerConfig } from 'src/components';
@@ -16,7 +16,18 @@ const DEFAULT_CONFIG = {
 const MainPage: React.FC = () => {
   const dispatch = useDispatch();
   const { isLoading, data: videos, error } = useSelector((state) => state.videos);
-  const [playbackConfig, setPlaybackConfig] = useState<VideoPlayerConfig>(DEFAULT_CONFIG);
+  const [playbackConfig, setPlaybackConfig] = React.useState<VideoPlayerConfig>(DEFAULT_CONFIG);
+
+  React.useEffect(() => {
+    if (videos && videos.length > 0) {
+      if (videos.length < playbackConfig.videosNumber) {
+        setPlaybackConfig({
+          ...playbackConfig,
+          videosNumber: videos.length,
+        });
+      }
+    }
+  }, [videos]);
 
   return (
     <PageContainer title="Video App">
@@ -24,7 +35,6 @@ const MainPage: React.FC = () => {
         <Grid.Row>
           <Grid.Col size={4} p={20} background="lightGrey">
             <SearchForm
-              availableVideos={videos?.length}
               playbackConfig={playbackConfig}
               handleNewSearch={(values) => {
                 setPlaybackConfig({
